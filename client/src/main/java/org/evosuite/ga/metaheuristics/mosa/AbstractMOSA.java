@@ -184,6 +184,7 @@ public abstract class AbstractMOSA<T extends Chromosome> extends GeneticAlgorith
 	 */
 	private void mutate(T offspring, T parent) {
 		offspring.mutate();
+        logger.info("mutation of {}", offspring.toString());
 		TestChromosome tch = (TestChromosome) offspring;
 		if (!offspring.isChanged()) {
 			// if offspring is not changed, we try to mutate it once again
@@ -330,6 +331,8 @@ public abstract class AbstractMOSA<T extends Chromosome> extends GeneticAlgorith
 
 		// Create a random parent population P0
 		this.generateInitialPopulation(Properties.POPULATION);
+
+        logger.info("GENERATED RANDOM POPULATION {}", this.population.toString());
 
 		// Determine fitness
 		this.calculateFitness();

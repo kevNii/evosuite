@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 import org.evosuite.Properties;
 import org.evosuite.ga.Chromosome;
+import org.evosuite.testcase.TestChromosome;
 import org.evosuite.ga.ChromosomeFactory;
 import org.evosuite.ga.FitnessFunction;
 import org.evosuite.ga.comparators.OnlyCrowdingComparator;
@@ -42,11 +43,11 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Annibale Panichella, Fitsum M. Kifetew, Paolo Tonella
  */
-public class DynaMOSA<T extends Chromosome> extends AbstractMOSA<T> {
+public class AdaptiveDynaMOSA<T extends Chromosome> extends AbstractMOSA<T> {
 
 	private static final long serialVersionUID = 146182080947267628L;
 
-	private static final Logger logger = LoggerFactory.getLogger(DynaMOSA.class);
+	private static final Logger logger = LoggerFactory.getLogger(AdaptiveDynaMOSA.class);
 
 	/** Manager to determine the test goals to consider at each generation */
 	protected StructuralGoalManager<T> goalsManager = null;
@@ -58,7 +59,7 @@ public class DynaMOSA<T extends Chromosome> extends AbstractMOSA<T> {
 	 * 
 	 * @param factory
 	 */
-	public DynaMOSA(ChromosomeFactory<T> factory) {
+	public AdaptiveDynaMOSA(ChromosomeFactory<T> factory) {
 		super(factory);
 	}
 
@@ -133,20 +134,28 @@ public class DynaMOSA<T extends Chromosome> extends AbstractMOSA<T> {
 
 		this.goalsManager = new MultiCriteriaManager<>(this.fitnessFunctions);
 
-		LoggingUtils.getEvoLogger().info("* Initial Number of Goals in DynMOSA = " +
+		LoggingUtils.getEvoLogger().info("* Initial Number of Goals in AdaptiveDynaMOSA = " +
 				this.goalsManager.getCurrentGoals().size() +" / "+ this.getUncoveredGoals().size());
 
 		logger.debug("Initial Number of Goals = " + this.goalsManager.getCurrentGoals().size());
-
 		//initialize population
 		if (this.population.isEmpty()) {
 			this.initializePopulation();
 		}
 
-		// LoggingUtils.getEvoLogger().info("+++ POPULATION +++\n\n\n" +
-		// this.population.toString());
+		// LoggingUtils.getEvoLogger().info("+++ POPULATION (adaptive) +++\n\n\n" +
+		// 	this.population.getClass() +
+		// 	"\n\n\n" + (this.population instanceof TestChromosome) +
+		// 	this.population.get(0).getClass() +
+		// 	"\n\n\n" + (this.population.get(0) instanceof TestChromosome) +
+		// 	"\n\n\n" + this.population.toString());
 
-		// logger.debug("+++ POPULATION +++\n\n\n" + this.population.toString());
+		// logger.debug("+++ POPULATION (adaptive) +++\n\n\n" +
+		// 	this.population.getClass() +
+		// 	"\n\n\n" + (this.population instanceof TestChromosome) +
+		// 	this.population.get(0).getClass() +
+		// 	"\n\n\n" + (this.population.get(0) instanceof TestChromosome) +
+		// 	"\n\n\n" + this.population.toString());
 
 		// update current goals
 		this.calculateFitness();
