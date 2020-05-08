@@ -181,7 +181,10 @@ public class AdaptiveDynaMOSA<T extends Chromosome> extends AbstractMOSA<T> {
 	 */
 	@Override
 	protected void calculateFitness(T c) {
-		this.goalsManager.calculateFitness(c);
-		this.notifyEvaluation(c);
+		if (!isFinished()) {
+			// this also updates the archive and the targets
+			this.goalsManager.calculateFitness(c, this);
+			this.notifyEvaluation(c);
+		}
 	}
 }
