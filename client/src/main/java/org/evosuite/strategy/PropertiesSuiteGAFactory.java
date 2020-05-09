@@ -190,6 +190,9 @@ public class PropertiesSuiteGAFactory extends PropertiesSearchAlgorithmFactory<T
 			case DYNAMOSA:
 				logger.info("Chosen search algorithm: DynaMOSA");
 				return new DynaMOSA<>(factory);
+			case ADAPTIVEDYNAMOSA:
+				logger.info("Chosen search algorithm: AdaptiveDynaMOSA");
+				return new AdaptiveDynaMOSA<>(factory);
 			case ONE_PLUS_LAMBDA_LAMBDA_GA:
 				logger.info("Chosen search algorithm: 1 + (lambda, lambda)GA");
 				return new OnePlusLambdaLambdaGA<>(factory, Properties.LAMBDA);

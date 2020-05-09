@@ -68,7 +68,7 @@ import static java.util.stream.Collectors.toList;
 
 /**
  * Abstract class for MOSA or variants of MOSA.
- * 
+ * a
  * @author Annibale Panichella, Fitsum M. Kifetew
  */
 public abstract class AbstractMOSA<T extends Chromosome> extends GeneticAlgorithm<T> {
