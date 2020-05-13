@@ -25,6 +25,7 @@ import org.evosuite.Properties.Criterion;
 import org.evosuite.coverage.TestFitnessFactory;
 import org.evosuite.ga.ChromosomeFactory;
 import org.evosuite.ga.FitnessFunction;
+import org.evosuite.ga.metaheuristics.AdaptiveListener;
 import org.evosuite.ga.metaheuristics.GeneticAlgorithm;
 import org.evosuite.ga.stoppingconditions.MaxStatementsStoppingCondition;
 import org.evosuite.result.TestGenerationResultBuilder;
@@ -49,6 +50,8 @@ import java.util.List;
  *
  */
 public class MOSuiteStrategy extends TestGenerationStrategy {
+
+	protected final AdaptiveListener adaptiveListener = new AdaptiveListener();
 
 	@Override	
 	public TestSuiteChromosome generateTests() {
@@ -82,6 +85,9 @@ public class MOSuiteStrategy extends TestGenerationStrategy {
 		algorithm.addListener(progressMonitor); // FIXME progressMonitor may cause
 		// client hang if EvoSuite is
 		// executed with -prefix!
+		if(Properties.ALGORITHM == Properties.Algorithm.ADAPTIVEDYNAMOSA) {
+			algorithm.addListener(adaptiveListener);
+		}
 		
 //		List<TestFitnessFunction> goals = getGoals(true);
 		LoggingUtils.getEvoLogger().info("* " + ClientProcess.getPrettyPrintIdentifier() + "Total number of test goals for {}: {}",
