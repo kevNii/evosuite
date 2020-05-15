@@ -1,6 +1,7 @@
 package org.evosuite.ga.metaheuristics;
 
 import org.evosuite.ga.Chromosome;
+import org.evosuite.utils.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,30 +13,30 @@ public class AdaptiveListener implements SearchListener {
 
     @Override
     public void searchStarted(GeneticAlgorithm<?> algorithm) {
-        logger.info("searchStarted+++++++++++++++++++++++++++++++++++++++++++++++++++");
+        LoggingUtils.getEvoLogger().info("searchStarted+++++++++++++++++++++++++++++++++++++++++++++++++++");
     }
 
     @Override
     public void iteration(GeneticAlgorithm<?> algorithm) {
         iterations++;
-        logger.info("iteration+++++++++++++++++++++++++++++++++++++++++++++++++++");
+        LoggingUtils.getEvoLogger().info("iteration+++++++++++++++++++++++++++++++++++++++++++++++++++");
     }
 
     @Override
     public void searchFinished(GeneticAlgorithm<?> algorithm) {
-        logger.debug("searchFinished+++++++++++++++++++++++++++++++++++++++++++++++++++");
-        logger.info("interations: " + Integer.toString(iterations));
-        logger.info("fitness evaluations: " + Integer.toString(fitnessEvaluations));
+        LoggingUtils.getEvoLogger().info("searchFinished+++++++++++++++++++++++++++++++++++++++++++++++++++");
+        LoggingUtils.getEvoLogger().info("interations: " + Integer.toString(iterations));
+        LoggingUtils.getEvoLogger().info("fitness evaluations: " + Integer.toString(fitnessEvaluations));
     }
 
     @Override
     public void fitnessEvaluation(Chromosome individual) {
         fitnessEvaluations++;
-        logger.info("fitnessEvaluation+++++++++++++++++++++++++++++++++++++++++++++++++++");
+        LoggingUtils.getEvoLogger().info("fitnessEvaluation+++++++++++++++++++++++++++++++++++++++++++++++++++");
     }
 
     @Override
     public void modification(Chromosome individual) {
-        logger.info("searchStarted+++++++++++++++++++++++++++++++++++++++++++++++++++");
+        LoggingUtils.getEvoLogger().info("searchStarted+++++++++++++++++++++++++++++++++++++++++++++++++++");
     }
 }
