@@ -77,6 +77,7 @@ public abstract class AbstractMOSA<T extends Chromosome> extends GeneticAlgorith
 
 	private static final Logger logger = LoggerFactory.getLogger(AbstractMOSA.class);
 
+
 	/** Keep track of overall suite fitness functions and correspondent test fitness functions */
 	protected final Map<TestSuiteFitnessFunction, Class<?>> suiteFitnessFunctions;
 
