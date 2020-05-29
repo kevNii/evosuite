@@ -129,11 +129,17 @@ public abstract class AbstractMOSA<T extends Chromosome> extends GeneticAlgorith
 			T parent1 = this.selectionFunction.select(this.population);
 			T parent2 = this.selectionFunction.select(this.population);
 			T offspring1 = (T) parent1.clone();
+			offspring1.didMutate = false;
+			offspring1.didCrossOver = false;
 			T offspring2 = (T) parent2.clone();
+			offspring2.didMutate = false;
+			offspring2.didCrossOver = false;
 			// apply crossover
 			try {
 				if (Randomness.nextDouble() <= Properties.CROSSOVER_RATE) {
 					this.crossoverFunction.crossOver(offspring1, offspring2);
+					offspring1.didCrossOver = true;
+					offspring2.didCrossOver = true;
 				}
 			} catch (ConstructionFailedException e) {
 				logger.debug("CrossOver failed.");
@@ -219,6 +225,9 @@ public abstract class AbstractMOSA<T extends Chromosome> extends GeneticAlgorith
 				tch.getTestCase().forEach(Statement::isValid);
 			}
 			offspring.setChanged(changed);
+		}
+		if (offspring.isChanged()) {
+			offspring.didMutate = true;
 		}
 		this.notifyMutation(offspring);
 	}

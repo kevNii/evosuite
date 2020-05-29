@@ -45,7 +45,9 @@ public abstract class Chromosome implements Comparable<Chromosome>, Serializable
 	/** Constant <code>logger</code> */
 	private static final Logger logger = LoggerFactory.getLogger(Chromosome.class);
 
-	/**
+	public boolean didCrossOver = false;
+	public boolean didMutate = false;
+    /**
 	 * only used for testing/debugging
 	 */
 	protected Chromosome() {
@@ -112,6 +114,16 @@ public abstract class Chromosome implements Comparable<Chromosome>, Serializable
         return fitnessValues.values().stream()
                 .mapToDouble(Double::doubleValue)
                 .sum();
+	}
+
+	public double getPreviousFitness() {
+		return previousFitnessValues.values().stream()
+				.mapToDouble(Double::doubleValue)
+				.sum();
+	}
+
+	public boolean hasImproved() {
+		return this.getFitness() < this.getPreviousFitness();
 	}
 
     /**
