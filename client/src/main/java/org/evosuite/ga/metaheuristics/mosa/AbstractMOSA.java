@@ -134,10 +134,13 @@ public abstract class AbstractMOSA<T extends Chromosome> extends GeneticAlgorith
 			T offspring2 = (T) parent2.clone();
 			offspring2.didMutate = false;
 			offspring2.didCrossOver = false;
+			offspring1.sibling = offspring2;
+			offspring2.sibling = offspring1;
 			// apply crossover
 			try {
 				if (Randomness.nextDouble() <= Properties.CROSSOVER_RATE) {
 					this.crossoverFunction.crossOver(offspring1, offspring2);
+					offspring1.parentFitnessSum = parent1.getFitness() + parent2.getFitness();
 					offspring1.didCrossOver = true;
 					offspring2.didCrossOver = true;
 				}
