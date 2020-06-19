@@ -38,21 +38,31 @@ public class ProgressValueAdaptiveListener implements SearchListener {
     public void iteration(GeneticAlgorithm<?> algorithm) {
         boolean print = (iterations + 1) % 100 == 0;
 
+        // Since evosuite minimizes fitness, we need to adapt the Lin Algo to reflect that
         double crossoversDuringIteration = 0;
         double mutationProgressValue = 0;
         double crossOverProgressValue = 0;
-        double f_max = 0;
-        double f_min = Double.POSITIVE_INFINITY;
+        // best/worst instead of max/min (since max is confusing if we're minimizing)
+        double f_best = Double.POSITIVE_INFINITY;
+        double f_worst = 0;
         double f_avg = 0;
+        double tmp;
         for (Chromosome individual: algorithm.population) {
-            if(individual.getFitness() > f_max) f_max = individual.getFitness();
-            if(individual.getFitness() < f_min) f_min = individual.getFitness();
+            if(individual.getFitness() < f_best) f_best = individual.getFitness();
+            if(individual.getFitness() > f_worst) f_worst = individual.getFitness();
             f_avg += individual.getFitness();
             if(individual.didMutate) {
-                mutationProgressValue += individual.getFitness() - individual.getPreviousFitness();
+                tmp = individual.parentFitness - individual.getFitness();
+                if(Double.isFinite(tmp)) {
+                    mutationProgressValue += tmp;
+                }
             }
             if(individual.didCrossOver) {
-                crossOverProgressValue += individual.getFitness() + individual.sibling.getFitness() - individual.parentFitnessSum;
+                // tmp = individual.parentFitnessSum - (individual.getFitness() + individual.sibling.getFitness());
+                tmp = (individual.parentFitnessSum / 2) - individual.getFitness();
+                if(Double.isFinite(tmp)) {
+                    crossOverProgressValue += tmp;
+                }
                 // Counting one individual that has been crossed over as half a crossover operation as to not double the count
                 crossoversDuringIteration += 0.5;
             }
@@ -61,22 +71,26 @@ public class ProgressValueAdaptiveListener implements SearchListener {
         f_avg = f_avg / algorithm.population.size();
 
         if(print) {
-            LoggingUtils.getEvoLogger().info("\rMutation Score: " + Double.toString(mutationProgressValue) + " | CrossOver Score: " + Double.toString(crossOverProgressValue));
+            LoggingUtils.getEvoLogger().info("\rMutation Score: " + Double.toString(mutationProgressValue) + " | CrossOver Score: " + Double.toString(crossOverProgressValue) + " | f_best: " + Double.toString(f_best) + " | f_avg: " + Double.toString(f_avg) + " | f_worst: " + Double.toString(f_worst));
         }
 
-        mutationProgressValue = mutationProgressValue / mutationsDuringIteration;
-        crossOverProgressValue = crossoversDuringIteration / crossoversDuringIteration;
+        if(mutationsDuringIteration > 0) {
+            mutationProgressValue = mutationProgressValue / mutationsDuringIteration;
+        }
+        if(crossoversDuringIteration > 0) {
+            crossOverProgressValue = crossOverProgressValue / crossoversDuringIteration;
+        }
 
         if(print) {
-            LoggingUtils.getEvoLogger().info("\rMutation Progress Value: " + Double.toString(mutationProgressValue) + " | CrossOver Progress Value: " + Double.toString(crossOverProgressValue));
+            LoggingUtils.getEvoLogger().info("\rMutation PV: " + Double.toString(mutationProgressValue) + " | CrossOver PV: " + Double.toString(crossOverProgressValue));
         }
 
-        if(mutationProgressValue > crossOverProgressValue) {
-            Properties.MUTATION_RATE = Math.min(Properties.MUTATION_RATE + getMutationIncrement(f_min, f_avg, f_max), MAX_MUTATION_RATE);
-            Properties.CROSSOVER_RATE = Math.max(Properties.CROSSOVER_RATE - getCrossoverIncrement(f_min, f_avg, f_max), MIN_CROSSOVER_RATE);
-        } else if(crossOverProgressValue > mutationProgressValue) {
-            Properties.CROSSOVER_RATE = Math.min(Properties.CROSSOVER_RATE + getCrossoverIncrement(f_min, f_avg, f_max), MAX_CROSSOVER_RATE);
-            Properties.MUTATION_RATE = Math.max(Properties.MUTATION_RATE - getMutationIncrement(f_min, f_avg, f_max), MIN_MUTATION_RATE);
+        if(mutationProgressValue > 0 && mutationProgressValue > crossOverProgressValue) {
+            Properties.MUTATION_RATE = Math.min(Properties.MUTATION_RATE + getMutationIncrement(f_worst, f_avg, f_best), MAX_MUTATION_RATE);
+            Properties.CROSSOVER_RATE = Math.max(Properties.CROSSOVER_RATE - getCrossoverIncrement(f_worst, f_avg, f_best), MIN_CROSSOVER_RATE);
+        } else if(crossOverProgressValue > 0 && crossOverProgressValue > mutationProgressValue) {
+            Properties.CROSSOVER_RATE = Math.min(Properties.CROSSOVER_RATE + getCrossoverIncrement(f_worst, f_avg, f_best), MAX_CROSSOVER_RATE);
+            Properties.MUTATION_RATE = Math.max(Properties.MUTATION_RATE - getMutationIncrement(f_worst, f_avg, f_best), MIN_MUTATION_RATE);
         }
 
         if(print) {
@@ -105,14 +119,14 @@ public class ProgressValueAdaptiveListener implements SearchListener {
     }
 
     private double getMutationIncrement(double f_min, double f_avg, double f_max) {
-        if(f_max > f_min) {
+        if(f_max > f_min && Double.isFinite(f_min) && Double.isFinite(f_avg) && Double.isFinite(f_max)) {
             return MUTATION_INCREMENT * ((f_max - f_avg) / (f_max - f_min));
         }
         return MUTATION_INCREMENT;
     }
 
     private double getCrossoverIncrement(double f_min, double f_avg, double f_max) {
-        if(f_max > f_min) {
+        if(f_max > f_min && Double.isFinite(f_min) && Double.isFinite(f_avg) && Double.isFinite(f_max)) {
             return CROSSOVER_INCREMENT * ((f_max - f_avg) / (f_max - f_min));
         }
         return CROSSOVER_INCREMENT;

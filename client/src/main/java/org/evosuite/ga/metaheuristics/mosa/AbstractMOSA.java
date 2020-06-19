@@ -131,9 +131,11 @@ public abstract class AbstractMOSA<T extends Chromosome> extends GeneticAlgorith
 			T offspring1 = (T) parent1.clone();
 			offspring1.didMutate = false;
 			offspring1.didCrossOver = false;
+			offspring1.parentFitness = parent1.getFitness();
 			T offspring2 = (T) parent2.clone();
 			offspring2.didMutate = false;
 			offspring2.didCrossOver = false;
+			offspring2.parentFitness = parent2.getFitness();
 			offspring1.sibling = offspring2;
 			offspring2.sibling = offspring1;
 			// apply crossover

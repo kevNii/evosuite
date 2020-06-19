@@ -190,6 +190,7 @@ public class PropertiesSuiteGAFactory extends PropertiesSearchAlgorithmFactory<T
 			case DYNAMOSA:
 				logger.info("Chosen search algorithm: DynaMOSA");
 				return new DynaMOSA<>(factory);
+			case PVADYNAMOSA:
 			case ADAPTIVEDYNAMOSA:
 				logger.info("Chosen search algorithm: AdaptiveDynaMOSA");
 				return new AdaptiveDynaMOSA<>(factory);

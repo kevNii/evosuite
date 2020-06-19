@@ -27,6 +27,8 @@ import org.evosuite.ga.ChromosomeFactory;
 import org.evosuite.ga.FitnessFunction;
 import org.evosuite.ga.metaheuristics.AdaptiveListener;
 import org.evosuite.ga.metaheuristics.GeneticAlgorithm;
+import org.evosuite.ga.metaheuristics.ProgressValueAdaptiveListener;
+import org.evosuite.ga.metaheuristics.SearchListener;
 import org.evosuite.ga.stoppingconditions.MaxStatementsStoppingCondition;
 import org.evosuite.result.TestGenerationResultBuilder;
 import org.evosuite.rmi.ClientServices;
@@ -51,7 +53,7 @@ import java.util.List;
  */
 public class MOSuiteStrategy extends TestGenerationStrategy {
 
-	protected final AdaptiveListener adaptiveListener = new AdaptiveListener();
+	protected SearchListener adaptiveListener;
 
 	@Override	
 	public TestSuiteChromosome generateTests() {
@@ -86,6 +88,10 @@ public class MOSuiteStrategy extends TestGenerationStrategy {
 		// client hang if EvoSuite is
 		// executed with -prefix!
 		if(Properties.ALGORITHM == Properties.Algorithm.ADAPTIVEDYNAMOSA) {
+			adaptiveListener = new AdaptiveListener();
+			algorithm.addListener(adaptiveListener);
+		} else if(Properties.ALGORITHM == Properties.Algorithm.PVADYNAMOSA) {
+			adaptiveListener = new ProgressValueAdaptiveListener();
 			algorithm.addListener(adaptiveListener);
 		}
 		

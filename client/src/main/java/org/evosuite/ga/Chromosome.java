@@ -48,6 +48,7 @@ public abstract class Chromosome implements Comparable<Chromosome>, Serializable
 	public boolean didCrossOver = false;
 	public boolean didMutate = false;
 	public double parentFitnessSum = 0;
+	public double parentFitness = 0;
 	public Chromosome sibling;
 
 	/**
