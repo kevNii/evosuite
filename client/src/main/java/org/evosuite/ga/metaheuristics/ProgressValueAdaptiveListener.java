@@ -22,21 +22,17 @@ public class ProgressValueAdaptiveListener implements SearchListener {
     public static double MAX_CROSSOVER_RATE = 0.99;
     public static double CROSSOVER_INCREMENT = 0.01;
 
-    boolean logOnePerInstance = true;
+    private final boolean DEBUG = false;
 
     @Override
     public void searchStarted(GeneticAlgorithm<?> algorithm) {
-        if(logOnePerInstance) {
-            logger.debug("+++++++++searchStarted+++++++++");
-            logOnePerInstance = false;
-        }
         Properties.MUTATION_RATE = INITIAL_MUTATION_RATE;
         Properties.CROSSOVER_RATE = INITIAL_CROSSOVER_RATE;
     }
 
     @Override
     public void iteration(GeneticAlgorithm<?> algorithm) {
-        boolean print = (iterations + 1) % 100 == 0;
+        boolean print = DEBUG && (iterations + 1) % 100 == 0;
 
         // Since evosuite minimizes fitness, we need to adapt the Lin Algo to reflect that
         double crossoversDuringIteration = 0;
@@ -52,6 +48,9 @@ public class ProgressValueAdaptiveListener implements SearchListener {
             if(individual.getFitness() > f_worst) f_worst = individual.getFitness();
             f_avg += individual.getFitness();
             if(individual.didMutate) {
+                /* if(individual.parentFitness != individual.getPreviousFitness()) {
+                    LoggingUtils.getEvoLogger().info("wtf is goin on: " + Double.toString(individual.parentFitness) + " != " + Double.toString(individual.getPreviousFitness()));
+                } */
                 tmp = individual.parentFitness - individual.getFitness();
                 if(Double.isFinite(tmp)) {
                     mutationProgressValue += tmp;
