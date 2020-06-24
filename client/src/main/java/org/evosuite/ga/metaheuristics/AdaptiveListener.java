@@ -16,14 +16,18 @@ public class AdaptiveListener implements SearchListener {
 
     public static double MIN_MUTATION_RATE = 0.01;
     public static double MAX_MUTATION_RATE = 0.5;
-    public static double MIN_CROSSOVER_RATE = 0.6;
+    public static double MUTATION_INCREMENT = 0.001;
+    public static double MIN_CROSSOVER_RATE = 0.5;
     public static double MAX_CROSSOVER_RATE = 0.99;
+    public static double CROSSOVER_INCREMENT = 0.001;
+    public static double MAX_SCORE_INCREMENT_PER_INDIVIDUAL = 1000;
 
     boolean logOnePerInstance = true;
+    private final boolean DEBUG = false;
 
     @Override
     public void searchStarted(GeneticAlgorithm<?> algorithm) {
-        if(logOnePerInstance) {
+        if(logOnePerInstance && DEBUG) {
             logger.debug("+++++++++searchStarted+++++++++");
             logOnePerInstance = false;
         }
@@ -31,54 +35,46 @@ public class AdaptiveListener implements SearchListener {
 
     @Override
     public void iteration(GeneticAlgorithm<?> algorithm) {
-        boolean print = (iterations + 1) % 100 == 0;
+        boolean print = DEBUG && (iterations + 1) % 100 == 0;
 
         int mutationIterationScore = 0;
         int crossOverIterationScore = 0;
-        double ftns, prevFtns;
+        double ftns, parentFtns, increment;
+        int mutations = 0,
+            crossovers = 0;
         for (Chromosome individual: algorithm.population) {
             ftns = individual.getFitness();
-            prevFtns = individual.getPreviousFitness();
-            if(ftns < prevFtns){
-                // improvement
-                if(individual.didMutate) {
-                    mutationIterationScore++;
-                }
-                if(individual.didCrossOver) {
-                    crossOverIterationScore++;
-                }
-            } else if(ftns > prevFtns) {
-                // deterioration
-                if(individual.didMutate) {
-                    mutationIterationScore--;
-                }
-                if(individual.didCrossOver) {
-                    crossOverIterationScore--;
-                }
+            parentFtns = individual.parentFitness;
+            if(individual.didMutate) {
+                increment = Math.min(parentFtns - ftns, MAX_SCORE_INCREMENT_PER_INDIVIDUAL);
+                mutationIterationScore += increment;
+                mutations++;
+            }
+            if(individual.didCrossOver) {
+                increment = Math.min(parentFtns - ftns, MAX_SCORE_INCREMENT_PER_INDIVIDUAL);
+                crossOverIterationScore += increment;
+                crossovers++;
             }
         }
 
         if(print) {
-            LoggingUtils.getEvoLogger().info("\rMutation Score: " + Integer.toString(mutationIterationScore) + " | CrossOver Score: " + Integer.toString(crossOverIterationScore));
+            LoggingUtils.getEvoLogger().info("\rMutations: " + Integer.toString(mutations) + " Mutation Score: " + Integer.toString(mutationIterationScore) + " | Crossovers: " + Integer.toString(crossovers) + " CrossOver Score: " + Integer.toString(crossOverIterationScore));
         }
 
-        crossOverIterationScore *= 2;
+        // Normalize Scores
+        if(mutations > 0 && Double.isFinite(mutationIterationScore)) {
+            mutationIterationScore = mutationIterationScore / mutations;
+        }
+        if(crossovers > 0 && Double.isFinite(crossOverIterationScore)) {
+            crossOverIterationScore = crossOverIterationScore / crossovers;
+        }
 
-        // Increase Operator that improved more individuals and reduce the other
-        if(mutationIterationScore > 0 && mutationIterationScore > crossOverIterationScore) {
-            Properties.MUTATION_RATE = Math.min(Properties.MUTATION_RATE + 0.001, MAX_MUTATION_RATE);
-            Properties.CROSSOVER_RATE = Math.max(Properties.CROSSOVER_RATE - 0.001, MIN_CROSSOVER_RATE);
-        } else if (crossOverIterationScore > 0 && crossOverIterationScore > mutationIterationScore) {
-            Properties.MUTATION_RATE = Math.max(Properties.MUTATION_RATE - 0.001, MIN_MUTATION_RATE);
-            Properties.CROSSOVER_RATE = Math.min(Properties.CROSSOVER_RATE + 0.001, MAX_CROSSOVER_RATE);
-        } else if(crossOverIterationScore < 0 && mutationIterationScore < 0) {
-            // Both suck
-            Properties.MUTATION_RATE = Math.max(Properties.MUTATION_RATE - 0.001, MIN_MUTATION_RATE);
-            Properties.CROSSOVER_RATE = Math.max(Properties.CROSSOVER_RATE - 0.001, MIN_CROSSOVER_RATE);
-        } else {
-            // both at least kinda good
-            Properties.MUTATION_RATE = Math.min(Properties.MUTATION_RATE + 0.001, MAX_MUTATION_RATE);
-            Properties.CROSSOVER_RATE = Math.min(Properties.CROSSOVER_RATE + 0.001, MAX_CROSSOVER_RATE);
+        // Increase Operators that caused net-improvement
+        if(mutationIterationScore > 0) {
+            Properties.MUTATION_RATE = Math.min(Math.max(Properties.MUTATION_RATE + MUTATION_INCREMENT, MIN_MUTATION_RATE), MAX_MUTATION_RATE);
+        }
+        if(crossOverIterationScore > 0) {
+            Properties.CROSSOVER_RATE = Math.min(Math.max(Properties.CROSSOVER_RATE + CROSSOVER_INCREMENT, MIN_CROSSOVER_RATE), MAX_CROSSOVER_RATE);
         }
 
         if(print) {
@@ -92,8 +88,10 @@ public class AdaptiveListener implements SearchListener {
 
     @Override
     public void searchFinished(GeneticAlgorithm<?> algorithm) {
-        LoggingUtils.getEvoLogger().info("\n# interations: " + Integer.toString(iterations));
-        LoggingUtils.getEvoLogger().info("# fitness evaluations: " + Integer.toString(fitnessEvaluations));
+        if(DEBUG) {
+            LoggingUtils.getEvoLogger().info("\n# interations: " + Integer.toString(iterations));
+            LoggingUtils.getEvoLogger().info("# fitness evaluations: " + Integer.toString(fitnessEvaluations));
+        }
     }
 
     @Override
@@ -103,19 +101,6 @@ public class AdaptiveListener implements SearchListener {
 
     @Override
     public void modification(Chromosome individual) {
-        modificationsPerIteration++;
-        double fitness = 0;
-        double previousFitness = 0;
 
-        for(double f : individual.getFitnessValues().values()) {
-            fitness += f;
-        }
-        for(double f : individual.getPreviousFitnessValues().values()) {
-            previousFitness += f;
-        }
-
-        if(fitness < previousFitness) {
-            improvementPerIteration++;
-        }
     }
 }
