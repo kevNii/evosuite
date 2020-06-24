@@ -32,7 +32,7 @@ public class ProgressValueAdaptiveListener implements SearchListener {
 
     @Override
     public void iteration(GeneticAlgorithm<?> algorithm) {
-        boolean print = DEBUG && (iterations + 1) % 100 == 0;
+        boolean print = false;//DEBUG && (iterations + 1) % 100 == 0;
 
         // Since evosuite minimizes fitness, we need to adapt the Lin Algo to reflect that
         double crossoversDuringIteration = 0;
@@ -102,8 +102,10 @@ public class ProgressValueAdaptiveListener implements SearchListener {
 
     @Override
     public void searchFinished(GeneticAlgorithm<?> algorithm) {
-        LoggingUtils.getEvoLogger().info("\n# interations: " + Integer.toString(iterations));
-        LoggingUtils.getEvoLogger().info("# fitness evaluations: " + Integer.toString(fitnessEvaluations));
+        if(DEBUG) {
+            LoggingUtils.getEvoLogger().info("\n# interations: " + Integer.toString(iterations));
+            LoggingUtils.getEvoLogger().info("# fitness evaluations: " + Integer.toString(fitnessEvaluations));
+        }
     }
 
     @Override
