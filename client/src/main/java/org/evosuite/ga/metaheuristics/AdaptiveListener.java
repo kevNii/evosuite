@@ -20,7 +20,7 @@ public class AdaptiveListener implements SearchListener {
     public static double MIN_CROSSOVER_RATE = 0.5;
     public static double MAX_CROSSOVER_RATE = 0.99;
     public static double CROSSOVER_INCREMENT = 0.001;
-    public static double MAX_SCORE_INCREMENT_PER_INDIVIDUAL = 1000;
+    public static double MAX_SCORE_INCREMENT_PER_INDIVIDUAL = 100;
 
     boolean logOnePerInstance = true;
     private final boolean DEBUG = false;
@@ -72,9 +72,13 @@ public class AdaptiveListener implements SearchListener {
         // Increase Operators that caused net-improvement
         if(mutationIterationScore > 0) {
             Properties.MUTATION_RATE = Math.min(Math.max(Properties.MUTATION_RATE + MUTATION_INCREMENT, MIN_MUTATION_RATE), MAX_MUTATION_RATE);
+        } else {
+            Properties.MUTATION_RATE = Math.max(Math.min(Properties.MUTATION_RATE - MUTATION_INCREMENT, MAX_MUTATION_RATE), MIN_MUTATION_RATE);
         }
         if(crossOverIterationScore > 0) {
             Properties.CROSSOVER_RATE = Math.min(Math.max(Properties.CROSSOVER_RATE + CROSSOVER_INCREMENT, MIN_CROSSOVER_RATE), MAX_CROSSOVER_RATE);
+        } else {
+            Properties.CROSSOVER_RATE = Math.max(Math.min(Properties.CROSSOVER_RATE - CROSSOVER_INCREMENT, MAX_CROSSOVER_RATE), MIN_CROSSOVER_RATE);
         }
 
         if(print) {
