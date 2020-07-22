@@ -16,7 +16,7 @@ public class ProgressValueAdaptiveListener implements SearchListener {
     public static double INITIAL_MUTATION_RATE = 0.5;
     public static double INITIAL_CROSSOVER_RATE = 0.5;
     public static double MIN_MUTATION_RATE = 0.001;
-    public static double MAX_MUTATION_RATE = 0.5;
+    public static double MAX_MUTATION_RATE = 0.75;
     public static double MUTATION_INCREMENT = 0.01;
     public static double MIN_CROSSOVER_RATE = 0.001;
     public static double MAX_CROSSOVER_RATE = 0.99;

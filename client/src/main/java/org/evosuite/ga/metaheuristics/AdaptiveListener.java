@@ -11,11 +11,9 @@ public class AdaptiveListener implements SearchListener {
     private final static Logger logger = LoggerFactory.getLogger(AdaptiveListener.class);
     private int fitnessEvaluations = 0;
     private int iterations = 0;
-    private int modificationsPerIteration = 0;
-    private int improvementPerIteration = 0;
 
     public static double MIN_MUTATION_RATE = 0.01;
-    public static double MAX_MUTATION_RATE = 0.5;
+    public static double MAX_MUTATION_RATE = 0.75;
     public static double MUTATION_INCREMENT = 0.001;
     public static double MIN_CROSSOVER_RATE = 0.5;
     public static double MAX_CROSSOVER_RATE = 0.99;
@@ -86,8 +84,6 @@ public class AdaptiveListener implements SearchListener {
         }
 
         iterations++;
-        improvementPerIteration = 0;
-        modificationsPerIteration = 0;
     }
 
     @Override
