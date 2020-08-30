@@ -25,9 +25,9 @@ import org.evosuite.Properties.Criterion;
 import org.evosuite.coverage.TestFitnessFactory;
 import org.evosuite.ga.ChromosomeFactory;
 import org.evosuite.ga.FitnessFunction;
-import org.evosuite.ga.metaheuristics.AdaptiveListener;
+import org.evosuite.ga.metaheuristics.NCPRGAListener;
 import org.evosuite.ga.metaheuristics.GeneticAlgorithm;
-import org.evosuite.ga.metaheuristics.ProgressValueAdaptiveListener;
+import org.evosuite.ga.metaheuristics.PRGAListener;
 import org.evosuite.ga.metaheuristics.SearchListener;
 import org.evosuite.ga.stoppingconditions.MaxStatementsStoppingCondition;
 import org.evosuite.result.TestGenerationResultBuilder;
@@ -88,10 +88,10 @@ public class MOSuiteStrategy extends TestGenerationStrategy {
 		// client hang if EvoSuite is
 		// executed with -prefix!
 		if(Properties.ALGORITHM == Properties.Algorithm.ADAPTIVEDYNAMOSA) {
-			adaptiveListener = new AdaptiveListener();
+			adaptiveListener = new NCPRGAListener();
 			algorithm.addListener(adaptiveListener);
 		} else if(Properties.ALGORITHM == Properties.Algorithm.PVADYNAMOSA) {
-			adaptiveListener = new ProgressValueAdaptiveListener();
+			adaptiveListener = new PRGAListener();
 			algorithm.addListener(adaptiveListener);
 		}
 		

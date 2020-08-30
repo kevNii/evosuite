@@ -6,9 +6,9 @@ import org.evosuite.utils.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AdaptiveListener implements SearchListener {
+public class NCPRGAListener implements SearchListener {
 
-    private final static Logger logger = LoggerFactory.getLogger(AdaptiveListener.class);
+    private final static Logger logger = LoggerFactory.getLogger(NCPRGAListener.class);
     private int fitnessEvaluations = 0;
     private int iterations = 0;
 

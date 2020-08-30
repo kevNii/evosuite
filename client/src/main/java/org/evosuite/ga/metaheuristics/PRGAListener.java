@@ -6,9 +6,9 @@ import org.evosuite.utils.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ProgressValueAdaptiveListener implements SearchListener {
+public class PRGAListener implements SearchListener {
 
-    private final static Logger logger = LoggerFactory.getLogger(ProgressValueAdaptiveListener.class);
+    private final static Logger logger = LoggerFactory.getLogger(PRGAListener.class);
     private int fitnessEvaluations = 0;
     private int iterations = 0;
     private int mutationsDuringIteration = 0;
