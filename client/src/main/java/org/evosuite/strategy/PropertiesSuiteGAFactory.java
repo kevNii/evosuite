@@ -187,8 +187,8 @@ public class PropertiesSuiteGAFactory extends PropertiesSearchAlgorithmFactory<T
 				logger.info("Chosen search algorithm: MOSA");
 				return new MOSA<>(factory);
 			case DYNAMOSA:
-			case PVADYNAMOSA:
-			case ADAPTIVEDYNAMOSA:
+			case PRDYNAMOSA:
+			case NCPRDYNAMOSA:
 				logger.info("Chosen search algorithm: DynaMOSA");
 				return new DynaMOSA<>(factory);
 			case ONE_PLUS_LAMBDA_LAMBDA_GA:

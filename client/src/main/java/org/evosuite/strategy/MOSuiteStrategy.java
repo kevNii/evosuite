@@ -87,10 +87,10 @@ public class MOSuiteStrategy extends TestGenerationStrategy {
 		algorithm.addListener(progressMonitor); // FIXME progressMonitor may cause
 		// client hang if EvoSuite is
 		// executed with -prefix!
-		if(Properties.ALGORITHM == Properties.Algorithm.ADAPTIVEDYNAMOSA) {
+		if(Properties.ALGORITHM == Properties.Algorithm.NCPRDYNAMOSA) {
 			adaptiveListener = new NCPRGAListener();
 			algorithm.addListener(adaptiveListener);
-		} else if(Properties.ALGORITHM == Properties.Algorithm.PVADYNAMOSA) {
+		} else if(Properties.ALGORITHM == Properties.Algorithm.PRDYNAMOSA) {
 			adaptiveListener = new PRGAListener();
 			algorithm.addListener(adaptiveListener);
 		}
